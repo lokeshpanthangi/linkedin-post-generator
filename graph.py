@@ -5,23 +5,13 @@ from generator.nodes import generate_post
 from langgraph.prebuilt import interrupt
 import asyncio
 
-
-
-
-
 def human_interupt_confirmation(state: State) -> bool:
     """Check if human interruption confirmed"""
     return state.get("human_interrupt_confirmed", False)
 
-
-
 def human_interupt_reason(state: State) -> str:
     """Get human interruption reason"""
     return state.get("human_interrupt_reason", "No reason provided.")
-
-
-
-
 
 async def evaluation_node(state: State) -> State:
     """Decide which evaluator to use next based on state"""
@@ -30,7 +20,7 @@ async def evaluation_node(state: State) -> State:
     temp = []
     # call the function in the evaluators and save the result in the evaluations dict
     for i in range(len(evaluators)):
-        temp.append()
+        # temp.append()
         if evaluators[i] == "linkedin_expert_evaluation":
             temp.append(linkedin_expert_evaluation(state["generated_post"]))
         if evaluators[i] == "devops_engineer_evaluation":
@@ -82,13 +72,8 @@ def orchestrator_node(state: State):
                 return END
             else:
                 return "human_interrupt_reason"
-            
-                
-                
-
 
 graph.add_node("orchestrator", orchestrator_node)
-
 
 # Define edges
 

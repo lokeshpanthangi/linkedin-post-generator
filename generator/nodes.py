@@ -1,3 +1,4 @@
+from typing import Dict, Any
 from langchain_core.messages import SystemMessage, HumanMessage
 from dataclasses import dataclass
 from enum import Enum
@@ -20,33 +21,41 @@ class i_generate_post:
     content: str
     niche: Niche
 
-async def generate_post(input: i_generate_post):
+async def generate_post(state: Dict[str, Any]):
+    """Generate post using user_input and generator fields."""
     try:
-        if len(input.content) <= 0:
-            raise Exception("content needs to be long")
-        if not isinstance(input.niche, Niche):
-            raise Exception("niche needs to be of proper type")
+        user_input = state.get("user_input", "")
+        generator = state.get("generator", "")
+        
+        if not user_input:
+            return {"generated_post": "", "user_feedback": "Error: No user input provided"}
+        
+        niche_map = {
+            "ai": Niche.AI_ML,
+            "ml": Niche.AI_ML,
+            "devops": Niche.FULL_STACK_DEV,
+            "backend": Niche.FULL_STACK_DEV,
+            "fullstack": Niche.FULL_STACK_DEV,
+            "blockchain": Niche.BLOCKCHAIN
+        }
+        niche = niche_map.get(generator.lower(), Niche.FULL_STACK_DEV)
         
         system_msg = SystemMessage(content=GENERATE_POST_PROMPT)
         human_msg = HumanMessage(
-            content=f"Niche: {NICHE_LABELS[input.niche]}, Content: {input.content}"
+            content=f"Niche: {NICHE_LABELS[niche]}, Content: {user_input}"
         )
 
         messages = [system_msg, human_msg]
+        full_post = await openai.ainvoke(messages)
         
-        async for chunk in openai.astream(messages):
-            print(chunk.content, end="", flush=True)
-
+        # async for chunk in openai.astream(messages):
+        #     if chunk.content:
+        #         full_post += chunk.content
+        
+        return {"generated_post": full_post}
+        
     except Exception as e:
-        print("FATAL: something went wriong while generting the post: ", e)
-        exit(0)
-
-# if __name__ == "__main__":
-#     import asyncio
-
-#     test_input = i_generate_post(
-#         content="This is a test post about improving API response times.",
-#         niche=Niche.FULL_STACK_DEV
-#     )
-
-#     asyncio.run(generate_post(test_input))
+        return {
+            "generated_post": "",
+            "user_feedback": f"Generation failed: {str(e)}"
+        }
