@@ -2,8 +2,8 @@ from typing import Dict, Any
 from langchain_core.messages import SystemMessage, HumanMessage
 from dataclasses import dataclass
 from enum import Enum
-from models import openai
-from prompts import GENERATE_POST_PROMPT, GENERATE_NEW_POST_WITH_FEEDBACK_PROMPT
+from generator.models import openai
+from generator.prompts import GENERATE_POST_PROMPT, GENERATE_NEW_POST_WITH_FEEDBACK_PROMPT
 
 class Niche(Enum):
     AI_ML = 1

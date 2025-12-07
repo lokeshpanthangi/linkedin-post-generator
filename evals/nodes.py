@@ -1,4 +1,4 @@
-from prompts import linkedin_expert_perspective, devops_engineer_perspective, genai_engineer_perspective, backend_engineer_perspective, hiring_manager_perspective
+from evals.prompts import linkedin_expert_perspective, devops_engineer_perspective, genai_engineer_perspective, backend_engineer_perspective, hiring_manager_perspective
 from config import model
 
 
