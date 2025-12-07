@@ -47,13 +47,13 @@ async def generate_post(state: Dict[str, Any]):
         )
 
         messages = [system_msg, human_msg]
-        full_post = await openai.ainvoke(messages)
+        response = await openai.ainvoke(messages)
         
         # async for chunk in openai.astream(messages):
         #     if chunk.content:
         #         full_post += chunk.content
         
-        return {"generated_post": full_post}
+        return {"generated_post": response.content}
         
     except Exception as e:
         return {
@@ -90,13 +90,13 @@ async def generate_new_post_with_feedback(state: Dict[str, Any]):
         )
 
         messages = [system_msg, human_msg]
-        full_post = await openai.ainvoke(messages)
+        response = await openai.ainvoke(messages)
         
         # async for chunk in openai.astream(messages):
         #     if chunk.content:
         #         full_post += chunk.content
         
-        return {"generated_post": full_post}
+        return {"generated_post": response.content}
         
     except Exception as e:
         return {

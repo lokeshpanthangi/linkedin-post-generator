@@ -1,5 +1,6 @@
 import uuid
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional, Literal
 from graph import app as workflow_app
@@ -10,6 +11,7 @@ from langgraph.types import Command
 
 class StartRequest(BaseModel):
     user_input: str
+    generator : str
     evaluators: List[str] = ["linkedin_expert_evaluation", "genai_engineer_evaluation"]
 
 class FeedbackRequest(BaseModel):
@@ -21,6 +23,15 @@ class FeedbackRequest(BaseModel):
 
 
 api = FastAPI(title="LinkedIn Post Generator Agent")
+
+# Add CORS middleware
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 
 
@@ -42,6 +53,7 @@ async def start_generation(request: StartRequest):
     initial_payload = {
         "user_input": request.user_input,
         "evaluators": request.evaluators,
+        "generator": request.generator,
         "generated_post": None,
         "evaluations": {},
         "human_interrupt_confirmed": False,
