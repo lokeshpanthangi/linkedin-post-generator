@@ -5,7 +5,7 @@ from langgraph.types import Command, interrupt
 from langgraph.checkpoint.memory import MemorySaver
 from state import State
 from evals.nodes import linkedin_expert_evaluation, devops_engineer_evaluation, genai_engineer_evaluation, backend_engineer_evaluation, hiring_manager_evaluation
-from generator.nodes import generate_post
+from generator.nodes import generate_post, generate_new_post_with_feedback
 
 
 def human_interupt_confirmation(state: State) -> Command[Literal["human_interrupt_reason", "__end__"]]:
@@ -99,6 +99,7 @@ graph = StateGraph(State)
 
 graph.add_node("orchestrator", input_node)
 graph.add_node("generate", generate_post)
+graph.add_node("generate_with_feedback", generate_new_post_with_feedback)
 graph.add_node("evaluation_node", evaluation_node)
 graph.add_node("human_bool_interrupt", human_interupt_confirmation)
 graph.add_node("human_interrupt_reason", human_interupt_reason)
@@ -113,8 +114,9 @@ graph.add_conditional_edges("orchestrator", orchestrator_node, {
     "human_bool_interrupt": "human_bool_interrupt"
 })
 graph.add_edge("generate", "orchestrator")
+graph.add_edge("generate_with_feedback", "orchestrator")
 graph.add_edge("evaluation_node", "orchestrator")
-graph.add_edge("human_interrupt_reason", "generate")
+graph.add_edge("human_interrupt_reason", "generate_with_feedback")
 
 
 

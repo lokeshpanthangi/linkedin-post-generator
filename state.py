@@ -3,7 +3,8 @@ from langgraph.graph.message import add_messages
 
 class State(TypedDict):
 
-    user_input: str 
+    user_input: str
+    generator: str 
     evaluators: List[str] 
     generated_post: Optional[str]
     evaluations: Dict[str, str]
