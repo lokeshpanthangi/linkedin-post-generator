@@ -8,7 +8,7 @@ from evals.nodes import linkedin_expert_evaluation, devops_engineer_evaluation, 
 from generator.nodes import generate_post
 
 
-def human_interupt_confirmation(state: State) -> Command[Literal["human_interrupt_reason", END]]:
+def human_interupt_confirmation(state: State) -> Command[Literal["human_interrupt_reason", "__end__"]]:
     """
     Pauses execution to ask the user for approval.
     
@@ -25,7 +25,7 @@ def human_interupt_confirmation(state: State) -> Command[Literal["human_interrup
     if user_feedback is True:
         return Command(
             update={"human_interrupt_confirmed": True},
-            goto=END
+            goto="__end__"
         )
     else:
         reason = user_feedback if isinstance(user_feedback, str) else "No reason provided."
@@ -44,7 +44,7 @@ def human_interupt_reason(state: State) -> State:
     The state is ALREADY filled with the user's input from the previous node.
     We just log it and pass it to the generator.
     """
-    
+
     reason = state.get("human_interrupt_reason", "No reason provided")
     
     print(f"\n--- PROCESSING FEEDBACK: {reason} ---\n")
